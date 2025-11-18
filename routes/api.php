@@ -1,0 +1,61 @@
+<?php
+
+use App\Http\Controllers\api\AnalysesMethodController;
+use App\Http\Controllers\api\AnalystController;
+use App\Http\Controllers\api\BrandTypeController;
+use App\Http\Controllers\api\CertificateController;
+use App\Http\Controllers\api\ClientController;
+use App\Http\Controllers\api\EquipmentController;
+use App\Http\Controllers\api\GradeController;
+use App\Http\Controllers\api\HomeController;
+use App\Http\Controllers\api\NAnalysesMethodsOrderController;
+use App\Http\Controllers\api\NAnalystController;
+use App\Http\Controllers\api\NEquipmentController;
+use App\Http\Controllers\api\NOrderSampleController;
+use App\Http\Controllers\api\NParameterMethodController;
+use App\Http\Controllers\api\NParameterMethodsController;
+use App\Http\Controllers\api\NReagentController;
+use App\Http\Controllers\api\OrderController;
+use App\Http\Controllers\api\ReagentController;
+use App\Http\Controllers\api\ReferenceStandardController;
+use App\Http\Controllers\api\SampleCategoryController;
+use App\Http\Controllers\api\SampleController;
+use App\Http\Controllers\api\SupplierController;
+use App\Http\Controllers\api\TestMethodController;
+use App\Http\Controllers\api\TestParameterController;
+use App\Http\Controllers\api\TrainingController;
+use App\Http\Controllers\api\UnitValueController;
+use App\Http\Controllers\api\UserController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+Route::apiResource('analyses_methods', AnalysesMethodController::class);
+Route::apiResource('analysts', AnalystController::class);
+Route::apiResource('brand_types', BrandTypeController::class);
+Route::apiResource('certificates', CertificateController::class);
+Route::apiResource('clients', ClientController::class);
+Route::apiResource('equipments', EquipmentController::class);
+Route::apiResource('grades', GradeController::class);
+Route::apiResource('homes', HomeController::class);
+Route::apiResource('n_analyses_methods_orders', NAnalysesMethodsOrderController::class);
+Route::apiResource('n_analysts', NAnalystController::class);
+Route::apiResource('n_equipments', NEquipmentController::class);
+Route::apiResource('n_order_samples', NOrderSampleController::class);
+Route::apiResource('n_parameter_methods', NParameterMethodController::class);
+Route::apiResource('n_parameter_methods_records', NParameterMethodsController::class);
+Route::apiResource('n_reagents', NReagentController::class);
+Route::apiResource('orders', OrderController::class);
+Route::apiResource('reagents', ReagentController::class);
+Route::apiResource('reference_standards', ReferenceStandardController::class);
+Route::apiResource('sample_categories', SampleCategoryController::class);
+Route::apiResource('samples', SampleController::class);
+Route::apiResource('suppliers', SupplierController::class);
+Route::apiResource('test_methods', TestMethodController::class);
+Route::apiResource('test_parameters', TestParameterController::class);
+Route::apiResource('trainings', TrainingController::class);
+Route::apiResource('unit_values', UnitValueController::class);
+Route::apiResource('users', UserController::class);
