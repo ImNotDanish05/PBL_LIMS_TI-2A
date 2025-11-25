@@ -15,13 +15,25 @@ class NAnalysesMethodsOrder extends Model
         'price'
     ];
 
-    public function orders()
+    public function order()
     {
         return $this->belongsTo(Order::class, 'order_id');
     }
 
-    public function analyses_methods()
+    // Backwards compatibility
+    public function orders()
+    {
+        return $this->order();
+    }
+
+    public function analysesMethod()
     {
         return $this->belongsTo(AnalysesMethod::class, 'analyses_method_id');
+    }
+
+    // Backwards compatibility
+    public function analyses_methods()
+    {
+        return $this->analysesMethod();
     }
 }

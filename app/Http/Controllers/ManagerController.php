@@ -209,53 +209,58 @@ class ManagerController extends Controller
     private function buildOrderDetail($id, bool $canValidate)
     {
         $order = Order::with([
-            'clients',
-            'samples.sample_categories',
+            'client',
+            'samples.sampleCategory',
             'analysesMethods',
             'analysts',
-            'n_parameter_methods.test_parameters.unit_values',
-            'n_parameter_methods.test_parameters.reference_standards',
-            'n_parameter_methods.test_methods.reference_standards',
-            'n_parameter_methods.equipments',
-            'n_parameter_methods.reagents',
-            'n_parameter_methods.samples',
+            'samples.parameterMethods.testParameter.unitValue',
+            'samples.parameterMethods.testParameter.referenceStandard',
+            'samples.parameterMethods.testMethod.referenceStandard',
+            'samples.parameterMethods.equipments',
+            'samples.parameterMethods.reagents',
+            'samples.parameterMethods.sample',
         ])->findOrFail($id);
 
-        $parameterMethods = $order->n_parameter_methods->map(function ($npm) {
-            $sample = $npm->samples;
-            $parameter = $npm->test_parameters;
-            $method = $npm->test_methods;
+        $parameterMethods = $order->samples
+            ->flatMap(function ($sample) {
+                return $sample->parameterMethods->map(function ($npm) use ($sample) {
+                    $parameter = $npm->testParameter;
+                    $method = $npm->testMethod;
 
-            return [
-                'id' => $npm->id,
-                'name' => $sample?->name,
-                'category' => $sample?->sample_categories?->name,
-                'status' => $npm->status,
-                'parameter' => [
-                    'name' => $parameter?->name,
-                    'category' => $parameter?->category,
-                    'detectionLimit' => $parameter?->detection_limit,
-                    'qualityStandard' => $parameter?->quality_standard,
-                ],
-                'method' => [
-                    'name' => $method?->name,
-                    'reference' => $method?->reference_standards?->name,
-                    'duration' => $method?->duration,
-                    'validityPeriod' => $method?->validity_period,
-                ],
-                'equipements' => $npm->equipments->map(fn($eq) => [
-                    'id' => $eq->id,
-                    'name' => $eq->name,
-                    'status' => $eq->status,
-                    'location' => $eq->location,
-                ]),
-                'reagents' => $npm->reagents->map(fn($re) => [
-                    'id' => $re->id,
-                    'name' => $re->name,
-                    'formula' => $re->formula,
-                ]),
-            ];
-        })->values();
+                    return [
+                        'id' => $npm->id,
+                        'name' => $sample?->name,
+                        'category' => $sample?->sampleCategory?->name,
+                        'status' => $npm->status,
+                        'parameter' => [
+                            'name' => $parameter?->name,
+                            'category' => $parameter?->category,
+                            'detectionLimit' => $parameter?->detection_limit,
+                            'qualityStandard' => $parameter?->quality_standard,
+                            'unit' => $parameter?->unitValue?->value,
+                            'reference' => $parameter?->referenceStandard?->name,
+                        ],
+                        'method' => [
+                            'name' => $method?->name,
+                            'reference' => $method?->referenceStandard?->name,
+                            'duration' => $method?->duration,
+                            'validityPeriod' => $method?->validity_period,
+                        ],
+                        'equipements' => $npm->equipments->map(fn($eq) => [
+                            'id' => $eq->id,
+                            'name' => $eq->name,
+                            'status' => $eq->status,
+                            'location' => $eq->location,
+                        ]),
+                        'reagents' => $npm->reagents->map(fn($re) => [
+                            'id' => $re->id,
+                            'name' => $re->name,
+                            'formula' => $re->formula,
+                        ]),
+                    ];
+                });
+            })
+            ->values();
 
         $detail = [
             'id' => $order->id,
@@ -267,11 +272,11 @@ class ManagerController extends Controller
             'report_file_path' => $order->report_file_path,
             'result_value' => $order->result_value,
             'notes' => $order->notes,
-            'analysis_methods' => $order->analyses_methods->map(fn($m) => [
+            'analysis_methods' => $order->analysesMethods->map(fn($m) => [
                 'analyses_method' => $m->analyses_method,
                 'pivot' => $m->pivot,
             ]),
-            'client' => $order->clients,
+            'client' => $order->client,
             'parameter_methods' => $parameterMethods,
             'analysts' => $order->analysts->map(fn($a) => [
                 'name' => $a->name,

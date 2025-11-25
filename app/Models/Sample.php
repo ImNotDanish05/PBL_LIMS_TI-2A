@@ -23,18 +23,46 @@ class Sample extends Model
         'storage_condition',
     ];
 
-    function sample_categories()
+    public function sampleCategory()
     {
         return $this->belongsTo(SampleCategory::class, 'sample_category_id');
     }
 
-    function n_order_samples()
+    // Backwards compatibility for existing eager loads
+    public function sample_categories()
+    {
+        return $this->sampleCategory();
+    }
+
+    public function orderSamples()
     {
         return $this->hasMany(NOrderSample::class, 'sample_id');
     }
 
+    // Backwards compatibility
+    public function n_order_samples()
+    {
+        return $this->orderSamples();
+    }
+
+    public function parameterMethods()
+    {
+        return $this->hasMany(NParameterMethod::class, 'sample_id');
+    }
+
+    // Backwards compatibility
     public function n_parameter_methods()
     {
-        return $this->hasOne(NParameterMethod::class, 'sample_id');
+        return $this->parameterMethods();
+    }
+
+    public function orders()
+    {
+        return $this->belongsToMany(
+            Order::class,
+            'n_order_samples',
+            'sample_id',
+            'order_id'
+        )->withPivot('sample_volume', 'created_at', 'updated_at');
     }
 }

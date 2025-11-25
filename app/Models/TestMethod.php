@@ -17,13 +17,25 @@ class TestMethod extends Model
         'validity_period'
     ];
 
-    public function reference_standards()
+    public function referenceStandard()
     {
         return $this->belongsTo(ReferenceStandard::class, 'reference_id');
     }
 
-    public function n_parameter_methods()
+    // Backwards compatibility
+    public function reference_standards()
+    {
+        return $this->referenceStandard();
+    }
+
+    public function parameterMethods()
     {
         return $this->hasMany(NParameterMethod::class, 'test_method_id');
+    }
+
+    // Backwards compatibility
+    public function n_parameter_methods()
+    {
+        return $this->parameterMethods();
     }
 }

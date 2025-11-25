@@ -18,18 +18,36 @@ class TestParameter extends Model
         'quality_standard'
     ];
 
-    public function unit_values()
+    public function unitValue()
     {
         return $this->belongsTo(UnitValue::class, 'unit_value_id');
     }
 
-    public function reference_standards()
+    // Backwards compatibility
+    public function unit_values()
+    {
+        return $this->unitValue();
+    }
+
+    public function referenceStandard()
     {
         return $this->belongsTo(ReferenceStandard::class, 'reference_id');
     }
 
-    public function n_parameter_methods()
+    // Backwards compatibility
+    public function reference_standards()
+    {
+        return $this->referenceStandard();
+    }
+
+    public function parameterMethods()
     {
         return $this->hasMany(NParameterMethod::class, 'test_parameter_id');
+    }
+
+    // Backwards compatibility
+    public function n_parameter_methods()
+    {
+        return $this->parameterMethods();
     }
 }

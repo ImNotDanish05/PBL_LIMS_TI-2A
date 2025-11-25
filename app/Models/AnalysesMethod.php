@@ -14,9 +14,15 @@ class AnalysesMethod extends Model
         'price',
     ];
 
-    public function n_analyses_methods_orders()
+    public function analysesMethodsOrders()
     {
         return $this->hasMany(NAnalysesMethodsOrder::class, 'analyses_method_id');
+    }
+
+    // Backwards compatibility
+    public function n_analyses_methods_orders()
+    {
+        return $this->analysesMethodsOrders();
     }
 
     public function orders()

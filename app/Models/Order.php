@@ -36,36 +36,37 @@ class Order extends Model
     {
         return $this->belongsToMany(
             AnalysesMethod::class,
-            'n_analyses_methods_orders', // nama pivot table
-            'order_id',                  // foreign key di pivot table
-            'analyses_method_id'         // related key di pivot table
-        )->withPivot('description', 'price') // kolom tambahan di pivot
-         ->withTimestamps();            // jika pivot table memiliki timestamps
+            'n_analyses_methods_orders',
+            'order_id',
+            'analyses_method_id'
+        )->withPivot('description', 'price')
+         ->withTimestamps();
+    }
+
+    public function analysesMethodsOrders()
+    {
+        return $this->hasMany(NAnalysesMethodsOrder::class, 'order_id');
     }
 
     public function samples()
     {
         return $this->belongsToMany(
-            Sample::class, 
+            Sample::class,
             'n_order_samples',
             'order_id',
             'sample_id'
-            )->withPivot('sample_volume', 'created_at', 'updated_at'); // Tambahkan pivot columns
+        )->withPivot('sample_volume', 'created_at', 'updated_at');
     }
 
-    public function clients()
+    public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
 
-    public function n_analyses_methods_orders()
+    // Backwards compatibility for existing eager loads
+    public function clients()
     {
-        return $this->hasMany(NAnalysesMethodsOrder::class, 'order_id');
-    }
-
-    public function n_parameter_methods()
-    {
-        return $this->hasMany(NParameterMethod::class, 'order_id');
+        return $this->client();
     }
 
     public function analysts()
