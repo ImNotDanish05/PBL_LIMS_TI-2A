@@ -1,0 +1,32 @@
+- SampleCategory (table `sample_categories`)
+  - Fields: `id`, `name`, timestamps.
+  - Relations: hasMany `Sample` via `sample_category_id`.
+  - Seeder: `SampleCategorySeeder` inserts 10 categories (Air, Tanah, Pangan, Mikrobiologi, Lingkungan, Farmasi, Kimia Industri, Biologi, Bahan Baku, Produk Jadi).
+
+- UnitValue (table `unit_values`)
+  - Fields: `id`, `value`, timestamps.
+  - Relations: hasMany `TestParameter` via `unit_value_id`.
+  - Seeder: `UnitValueSeeder` inserts common lab units (mg/L, µg/L, ppm, ppb, CFU/mL, %, mg/kg, g/L, mL, pH, NTU, °C, μS/cm).
+
+- ReferenceStandard (table `reference_standards`)
+  - Fields: `id`, `name`, timestamps.
+  - Relations: hasMany `TestParameter` and `TestMethod` via `reference_id`.
+  - Seeder: `ReferenceStandardSeeder` inserts ISO 17025:2017, SNI 19-17025:2018, AOAC Official Method, ASTM Standard, EPA Method. Additional standards created on the fly by other seeders (e.g., SNI Metodologi, SNI 01-2891-1992, ISO 4833:2013, SNI 06-6989.25-2005).
+
+- TestParameter (table `test_parameters`)
+  - Fields: `id`, `unit_value_id` (FK), `reference_id` (FK), `name`, `category` enum (kimia/mikrobiologi/fisika/klinik), `detection_limit` enum (LOD/LOQ), `quality_standard`, timestamps.
+  - Relations: belongsTo `UnitValue` (as `unit_values`), belongsTo `ReferenceStandard` (as `reference_standards`), hasMany `NParameterMethod`.
+  - Seeder: `TestParameterSeeder` seeds examples (Kadar Air, Total Plate Count, Kekeruhan) with corresponding units, categories, detection limits, and reference standards.
+
+- TestMethod (table `test_methods`)
+  - Fields: `id`, `reference_id` (FK), `name`, `applicable_parameter`, `duration` (minutes), `validity_period` (date), timestamps.
+  - Relations: belongsTo `ReferenceStandard` (as `reference_standards`), hasMany `NParameterMethod`.
+  - Seeder: `TestMethodSeeder` seeds three methods (Spektrofotometri UV-Vis, Titrasi Asam Basa, Gravimetri) tied to the SNI Metodologi reference.
+
+- NParameterMethod (table `n_parameter_methods`, pivot/transaction)
+  - Fields: `id`, `sample_id` (FK), `test_parameter_id` (FK), `test_method_id` (FK), `result` (nullable), `status` enum (in_progress/failed/success), timestamps.
+  - Relations: belongsTo `Sample`, `TestParameter`, `TestMethod`; belongsToMany `Equipment` via `n_equipments`; belongsToMany `Reagent` via `n_reagents`.
+  - Seeder: `NParameterMethodSeeder` links each sample to random parameters/methods, synthesizes result strings with the correct unit, and assigns random statuses (skips seeding if prerequisites are missing).
+
+- Seeder run order notes
+  - `DatabaseSeeder` documents intended order; most calls (including the seeders above) are currently commented out, so run them manually or re-enable them as needed to populate master data before transactional seeders.
