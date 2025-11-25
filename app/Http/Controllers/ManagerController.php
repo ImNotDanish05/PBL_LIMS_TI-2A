@@ -228,23 +228,49 @@ class ManagerController extends Controller
                     $method = $npm->testMethod;
 
                     return [
-                        'id' => $npm->id,
+                        'id' => $sample?->id,
                         'name' => $sample?->name,
-                        'category' => $sample?->sampleCategory?->name,
+                        'sample_categories' => [
+                            'name' => $sample?->sampleCategory?->name,
+                        ],
+                        'form' => $sample?->form,
+                        'condition' => $sample?->condition,
+                        'status' => $sample?->status,
+                        'preservation_method' => $sample?->preservation_method,
+                        'storage_condition' => $sample?->storage_condition,
+                        'pivot' => [
+                            'sample_volume' => $sample?->pivot?->sample_volume,
+                        ],
                         'status' => $npm->status,
                         'parameter' => [
                             'name' => $parameter?->name,
                             'category' => $parameter?->category,
-                            'detectionLimit' => $parameter?->detection_limit,
-                            'qualityStandard' => $parameter?->quality_standard,
-                            'unit' => $parameter?->unitValue?->value,
-                            'reference' => $parameter?->referenceStandard?->name,
+                            'detection_limit' => $parameter?->detection_limit,
+                            'quality_standard' => $parameter?->quality_standard,
+                            'unit_values' => $parameter?->unitValue
+                                ? [
+                                    'id' => $parameter->unitValue->id,
+                                    'value' => $parameter->unitValue->value,
+                                ]
+                                : null,
+                            'reference_standards' => $parameter?->referenceStandard
+                                ? [
+                                    'id' => $parameter->referenceStandard->id,
+                                    'name' => $parameter->referenceStandard->name,
+                                ]
+                                : null,
                         ],
                         'method' => [
                             'name' => $method?->name,
-                            'reference' => $method?->referenceStandard?->name,
+                            'reference_standards' => $method?->referenceStandard
+                                ? [
+                                    'id' => $method->referenceStandard->id,
+                                    'name' => $method->referenceStandard->name,
+                                ]
+                                : null,
                             'duration' => $method?->duration,
-                            'validityPeriod' => $method?->validity_period,
+                            'validity_period' => $method?->validity_period,
+                            'applicable_parameter' => $method?->applicable_parameter,
                         ],
                         'equipements' => $npm->equipments->map(fn($eq) => [
                             'id' => $eq->id,
