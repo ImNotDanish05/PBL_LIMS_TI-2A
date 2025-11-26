@@ -38,6 +38,7 @@ export default function ReportValidationPage({ auth, reportData }) {
                 data={parameters}
                 columns={columns}
                 showFilter={true}
+                showCreate={false}
                 filterColumn="status"
                 filterOptions={filterData}
             />

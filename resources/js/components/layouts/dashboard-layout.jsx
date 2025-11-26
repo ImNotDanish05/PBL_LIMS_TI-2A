@@ -17,7 +17,7 @@ export default function DashboardLayout({
     const { url } = usePage();
     const { user, loading, logout } = useAuth();
 
-    const currentUser = useMemo(() => user ?? { name: "Guest", role: "guest" }, [user]);
+    const currentUser = useMemo(() => user ?? { name: "Loading...", role: "Loading..." }, [user]);
 
     const sidebarMenu = useMemo(() => menuItems(url), [url]);
 

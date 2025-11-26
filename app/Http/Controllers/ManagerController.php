@@ -22,8 +22,19 @@ class ManagerController extends Controller
      */
     public function dashboard()
     {
-        $totalOrders = Order::count();
-        $totalRevenue = NAnalysesMethodsOrder::sum('price');
+        // Total Orders selain completed
+        $totalOrders = Order::where('status', '!=', 'completed')->count();
+
+        // Total Revenue 6 bulan terakhir
+        $totalRevenueRaw = NAnalysesMethodsOrder::where(
+            'created_at',
+            '>=',
+            now()->subMonths(6)
+        )->sum('price');
+
+        // Format Rupiah
+        $totalRevenue = "Rp " . number_format($totalRevenueRaw, 0, ',', '.');
+
 
         $stats = [
             [

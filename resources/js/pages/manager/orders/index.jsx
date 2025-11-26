@@ -32,6 +32,7 @@ export default function OrdersPage({ auth, ordersData }) {
                 data={parameters}
                 columns={columns}
                 showFilter={true}
+                showCreate={false}
                 filterColumn="status"
                 filterOptions={filterData}
             />
